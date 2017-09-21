@@ -250,9 +250,10 @@ func JWTSecurity(name string, dsl ...func()) *design.SecuritySchemeDefinition {
 	}
 
 	def := &design.SecuritySchemeDefinition{
-		SchemeName: name,
-		Kind:       design.JWTSecurityKind,
-		Type:       "apiKey",
+		SchemeName:  name,
+		Kind:        design.JWTSecurityKind,
+		Type:        "apiKey",
+		ScopesClaim: "scopes",
 	}
 
 	if len(dsl) != 0 {
@@ -289,6 +290,23 @@ func Scope(name string, desc ...string) {
 			d = desc[0]
 		}
 		current.Scopes[name] = d
+	default:
+		dslengine.IncompatibleDSL()
+	}
+}
+
+// ScopesClaim can be used in: JWTSecurity
+//
+// ScopesClaim holds the claim that contains the scopes in a JWT. By default,
+// this will be "scopes".
+func ScopesClaim(claimName string) {
+	switch current := dslengine.CurrentDefinition().(type) {
+	case *design.SecuritySchemeDefinition:
+		if current.Kind != design.JWTSecurityKind {
+			dslengine.IncompatibleDSL()
+			return
+		}
+		current.ScopesClaim = claimName
 	default:
 		dslengine.IncompatibleDSL()
 	}

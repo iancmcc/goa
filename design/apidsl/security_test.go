@@ -71,6 +71,33 @@ var _ = Describe("Security", func() {
 		Ω(Design.SecuritySchemes[3].Scopes).Should(HaveLen(2))
 	})
 
+	Context("with JWT security", func() {
+		It("should default to 'scopes' as the scope claim", func() {
+			API("", func() {
+				JWTSecurity("jwt", func() {
+					TokenURL("/token")
+					Scope("read", "Read")
+					Scope("write", "Write")
+				})
+			})
+			dslengine.Run()
+			Ω(Design.SecuritySchemes[0].ScopesClaim).Should(Equal("scopes"))
+		})
+
+		It("should permit an overridden scopes claim", func() {
+			API("", func() {
+				JWTSecurity("jwt", func() {
+					TokenURL("/token")
+					Scope("read", "Read")
+					Scope("write", "Write")
+					ScopesClaim("not_scopes")
+				})
+			})
+			dslengine.Run()
+			Ω(Design.SecuritySchemes[0].ScopesClaim).Should(Equal("not_scopes"))
+		})
+	})
+
 	Context("with basic security", func() {
 		It("should fail because of duplicate In declaration", func() {
 			API("", func() {

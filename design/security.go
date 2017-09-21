@@ -63,6 +63,8 @@ type SecuritySchemeDefinition struct {
 	// Scopes is a list of available scopes for this scheme, along
 	// with their textual description.
 	Scopes map[string]string `json:"scopes,omitempty"`
+	// ScopesClaim holds the claim containing scopes in a JWT token
+	ScopesClaim string `json:"scopesclaim,omitempty"`
 	// Flow determines the oauth2 flow to use for this scheme.
 	Flow string `json:"flow,omitempty"`
 	// TokenURL holds the URL for refreshing tokens with oauth2 or JWT
